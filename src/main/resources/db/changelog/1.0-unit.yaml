@@ -1,0 +1,62 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: me
+      changes:
+        - createSequence:
+            sequenceName: user_seq
+            startValue: 1
+            incrementBy: 1
+
+        - createSequence:
+            sequenceName: unit_seq
+            startValue: 1
+            incrementBy: 1
+
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: units
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: number_of_rooms
+                  type: int
+              - column:
+                  name: accommodation_type
+                  type: varchar(255)
+              - column:
+                  name: floor
+                  type: int
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: base_price
+                  type: decimal(10,2)
+              - column:
+                  name: markup_price
+                  type: decimal(10,2)
+              - column:
+                  name: created_by
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_unit_user
+                    references: users(id)
