@@ -3,6 +3,7 @@ package com.booking.repository;
 import com.booking.entity.Unit;
 import com.booking.entity.enums.AccommodationType;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,13 +32,13 @@ public interface UnitRepository extends JpaRepository<Unit, Long> {
       @Param("floor") Integer floor,
       @Param("minPrice") BigDecimal minPrice,
       @Param("maxPrice") BigDecimal maxPrice,
-      @Param("startDate") java.time.LocalDate startDate,
-      @Param("endDate") java.time.LocalDate endDate,
+      @Param("startDate") LocalDate startDate,
+      @Param("endDate") LocalDate endDate,
       Pageable pageable
   );
 
   @Query("""
-      SELECT COUNT(DISTINCT u) FROM Unit u
+      SELECT COUNT(DISTINCT u.id) FROM Unit u
       WHERE NOT EXISTS (
         SELECT 1 FROM Booking b
         WHERE b.unit = u
@@ -46,7 +47,7 @@ public interface UnitRepository extends JpaRepository<Unit, Long> {
       )
       """)
   long countAvailableUnits(
-      @Param("startDate") java.time.LocalDate startDate,
-      @Param("endDate") java.time.LocalDate endDate
+      @Param("startDate") LocalDate startDate,
+      @Param("endDate") LocalDate endDate
   );
 }

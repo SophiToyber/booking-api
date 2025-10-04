@@ -13,6 +13,7 @@ import com.booking.web.dto.booking.BookingResponse;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ public class BookingService {
   private final UserRepository userRepository;
   private final BookingMapper bookingMapper;
 
+  @CacheEvict(value = "availableUnits", allEntries = true)
   public BookingResponse create(BookingCreateRequest req) {
     if (req.endDate().isBefore(req.startDate()) || req.endDate().isEqual(req.startDate())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -62,7 +64,7 @@ public class BookingService {
     booking.setExpiresAt(expiresAt);
 
     Booking saved = bookingRepository.save(booking);
-    log.info("Created booking {} for unit {} by user {}, expires at {}",
+    log.info("Created booking {} for unit {} by user {}, expires at {}. Cache invalidated.",
         saved.getId(), unit.getId(), user.getId(), expiresAt);
 
     return bookingMapper.toDto(saved);
@@ -76,6 +78,7 @@ public class BookingService {
     return bookingMapper.toDto(booking);
   }
 
+  @CacheEvict(value = "availableUnits", allEntries = true)
   public BookingResponse cancel(Long id) {
     Booking booking = bookingRepository.findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -92,12 +95,12 @@ public class BookingService {
     }
 
     booking.setStatus(BookingStatus.CANCELLED);
-    log.info("Cancelled booking {}", id);
+    log.info("Cancelled booking {}. Cache invalidated.", id);
 
     return bookingMapper.toDto(booking);
   }
 
-
+  @CacheEvict(value = "availableUnits", allEntries = true)
   public BookingResponse pay(Long id) {
     Booking booking = bookingRepository.findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -115,13 +118,13 @@ public class BookingService {
 
     if (LocalDateTime.now().isAfter(booking.getExpiresAt())) {
       booking.setStatus(BookingStatus.CANCELLED);
-      log.info("Booking {} expired, automatically cancelled", id);
+      log.info("Booking {} expired, automatically cancelled. Cache invalidated.", id);
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "Booking has expired and was cancelled");
     }
 
     booking.setStatus(BookingStatus.PAID);
-    log.info("Paid booking {}", id);
+    log.info("Paid booking {}. Cache invalidated.", id);
 
     return bookingMapper.toDto(booking);
   }
@@ -149,6 +152,7 @@ public class BookingService {
     return true;
   }
 
+  @CacheEvict(value = "availableUnits", allEntries = true)
   public void cancelExpiredBookings() {
     LocalDateTime now = LocalDateTime.now();
 
@@ -163,7 +167,7 @@ public class BookingService {
     }
 
     if (!expiredBookings.isEmpty()) {
-      log.info("Auto-cancelled {} expired bookings", expiredBookings.size());
+      log.info("Auto-cancelled {} expired bookings. Cache invalidated.", expiredBookings.size());
     }
   }
 }

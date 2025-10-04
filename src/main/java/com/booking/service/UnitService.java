@@ -5,13 +5,17 @@ import com.booking.entity.User;
 import com.booking.mapper.UnitMapper;
 import com.booking.repository.UnitRepository;
 import com.booking.repository.UserRepository;
+import com.booking.web.dto.statistics.AvailableUnitsResponse;
 import com.booking.web.dto.unit.UnitCreateRequest;
 import com.booking.web.dto.unit.UnitResponse;
 import com.booking.web.dto.unit.UnitSearchRequest;
 import com.booking.web.dto.unit.UnitUpdateRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -19,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -78,14 +83,21 @@ public class UnitService {
 
     return units.map(unitMapper::toDto);
   }
-  
+
   @Transactional(readOnly = true)
-  public long countAvailable(java.time.LocalDate startDate, java.time.LocalDate endDate) {
+  @Cacheable(value = "availableUnits", key = "#startDate + '_' + #endDate")
+  public AvailableUnitsResponse getAvailableCount(LocalDate startDate, LocalDate endDate) {
     if (endDate.isBefore(startDate) || endDate.isEqual(startDate)) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "End date must be after start date");
     }
-    return unitRepository.countAvailableUnits(startDate, endDate);
+
+    log.debug("Calculating available units count for period {} to {} (cache miss)",
+        startDate, endDate);
+
+    long count = unitRepository.countAvailableUnits(startDate, endDate);
+
+    return AvailableUnitsResponse.of(count, startDate, endDate);
   }
 
   public UnitResponse update(Long id, UnitUpdateRequest req) {
@@ -107,7 +119,7 @@ public class UnitService {
     Unit unit = unitRepository.findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
             "Unit %d not found".formatted(id)));
-    // TODO: add active bookings check or auto-canceling
+
     unitRepository.delete(unit);
   }
 
