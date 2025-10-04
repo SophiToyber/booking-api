@@ -1,0 +1,136 @@
+@baseUrl = http://localhost:8080
+@contentType = application/json
+
+### Prepare: create user (201)
+POST {{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "name": "John Booking"
+}
+
+> {% client.global.set("userId", response.body.id); %}
+
+### Prepare: create owner (201)
+POST {{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "name": "Unit Owner"
+}
+
+> {% client.global.set("ownerId", response.body.id); %}
+
+### Prepare: create unit (201)
+POST {{baseUrl}}/api/units
+Content-Type: {{contentType}}
+
+{
+  "numberOfRooms": 2,
+  "accommodationType": "FLAT",
+  "floor": 3,
+  "basePrice": 100.00,
+  "description": "Cozy flat in city center",
+  "createdById": {{ownerId}}
+}
+
+> {% client.global.set("unitId", response.body.id); %}
+
+### Create booking (201)
+POST {{baseUrl}}/api/bookings
+Content-Type: {{contentType}}
+
+{
+  "unitId": {{unitId}},
+  "userId": {{userId}},
+  "startDate": "2025-10-10",
+  "endDate": "2025-10-15"
+}
+
+> {% client.global.set("bookingId", response.body.id); %}
+
+### Get booking by id (200)
+GET {{baseUrl}}/api/bookings/{{bookingId}}
+
+### Cancel booking (200)
+PUT {{baseUrl}}/api/bookings/{{bookingId}}/cancel
+
+### Pay for booking (200)
+PUT {{baseUrl}}/api/bookings/{{bookingId}}/pay
+
+### Negative: try to create overlapping booking (409)
+POST {{baseUrl}}/api/bookings
+Content-Type: {{contentType}}
+
+{
+  "unitId": {{unitId}},
+  "userId": {{userId}},
+  "startDate": "2025-10-12",
+  "endDate": "2025-10-17"
+}
+
+### Negative: invalid dates - end before start (400)
+POST {{baseUrl}}/api/bookings
+Content-Type: {{contentType}}
+
+{
+  "unitId": {{unitId}},
+  "userId": {{userId}},
+  "startDate": "2025-10-15",
+  "endDate": "2025-10-10"
+}
+
+### Negative: non-existing unit (404)
+POST {{baseUrl}}/api/bookings
+Content-Type: {{contentType}}
+
+{
+  "unitId": 999999,
+  "userId": {{userId}},
+  "startDate": "2025-10-10",
+  "endDate": "2025-10-15"
+}
+
+### Search available units - all criteria
+POST {{baseUrl}}/api/units/search?page=0&size=10&sort=markupPrice,asc
+Content-Type: {{contentType}}
+
+{
+  "startDate": "2025-10-20",
+  "endDate": "2025-10-25",
+  "numberOfRooms": 2,
+  "accommodationType": "FLAT",
+  "floor": 3,
+  "minPrice": 50.00,
+  "maxPrice": 200.00
+}
+
+### Search available units - only dates (required)
+POST {{baseUrl}}/api/units/search
+Content-Type: {{contentType}}
+
+{
+  "startDate": "2025-11-01",
+  "endDate": "2025-11-05"
+}
+
+### Search with price filter
+POST {{baseUrl}}/api/units/search?sort=markupPrice,desc
+Content-Type: {{contentType}}
+
+{
+  "startDate": "2025-11-01",
+  "endDate": "2025-11-05",
+  "minPrice": 100.00,
+  "maxPrice": 300.00
+}
+
+### Search by accommodation type
+POST {{baseUrl}}/api/units/search
+Content-Type: {{contentType}}
+
+{
+  "startDate": "2025-11-01",
+  "endDate": "2025-11-05",
+  "accommodationType": "HOME"
+}
