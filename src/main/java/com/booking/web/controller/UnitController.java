@@ -3,6 +3,7 @@ package com.booking.web.controller;
 import com.booking.service.UnitService;
 import com.booking.web.dto.unit.UnitCreateRequest;
 import com.booking.web.dto.unit.UnitResponse;
+import com.booking.web.dto.unit.UnitSearchRequest;
 import com.booking.web.dto.unit.UnitUpdateRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,13 @@ public class UnitController {
   @GetMapping
   public Page<UnitResponse> list(Pageable pageable) {
     return unitService.list(pageable);
+  }
+  
+  @PostMapping("/search")
+  public Page<UnitResponse> searchAvailable(
+      @RequestBody @Valid UnitSearchRequest req,
+      Pageable pageable) {
+    return unitService.searchAvailable(req, pageable);
   }
 
   @PutMapping("/{id}")

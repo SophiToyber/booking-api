@@ -7,6 +7,7 @@ import com.booking.repository.UnitRepository;
 import com.booking.repository.UserRepository;
 import com.booking.web.dto.unit.UnitCreateRequest;
 import com.booking.web.dto.unit.UnitResponse;
+import com.booking.web.dto.unit.UnitSearchRequest;
 import com.booking.web.dto.unit.UnitUpdateRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -27,7 +28,6 @@ public class UnitService {
   private final UserRepository userRepository;
   private final UnitMapper unitMapper;
 
-
   public UnitResponse create(UnitCreateRequest req) {
     User ownerRef = userRepository.getReferenceById(req.createdById());
 
@@ -45,7 +45,6 @@ public class UnitService {
     return unitMapper.toDto(saved);
   }
 
-
   @Transactional(readOnly = true)
   public UnitResponse getById(Long id) {
     Unit unit = unitRepository.findById(id)
@@ -57,6 +56,36 @@ public class UnitService {
   @Transactional(readOnly = true)
   public Page<UnitResponse> list(Pageable pageable) {
     return unitRepository.findAll(pageable).map(unitMapper::toDto);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<UnitResponse> searchAvailable(UnitSearchRequest req, Pageable pageable) {
+    if (req.endDate().isBefore(req.startDate()) || req.endDate().isEqual(req.startDate())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "End date must be after start date");
+    }
+
+    Page<Unit> units = unitRepository.findAvailableUnits(
+        req.numberOfRooms(),
+        req.accommodationType(),
+        req.floor(),
+        req.minPrice(),
+        req.maxPrice(),
+        req.startDate(),
+        req.endDate(),
+        pageable
+    );
+
+    return units.map(unitMapper::toDto);
+  }
+  
+  @Transactional(readOnly = true)
+  public long countAvailable(java.time.LocalDate startDate, java.time.LocalDate endDate) {
+    if (endDate.isBefore(startDate) || endDate.isEqual(startDate)) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "End date must be after start date");
+    }
+    return unitRepository.countAvailableUnits(startDate, endDate);
   }
 
   public UnitResponse update(Long id, UnitUpdateRequest req) {
@@ -85,5 +114,4 @@ public class UnitService {
   private BigDecimal applyMarkup(BigDecimal base) {
     return base.multiply(new BigDecimal("1.15")).setScale(2, RoundingMode.HALF_UP);
   }
-
 }
