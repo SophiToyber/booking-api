@@ -1,0 +1,37 @@
+@baseUrl = http://localhost:8080
+@contentType = application/json
+
+### Create user (201)
+POST {{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "name": "Me"
+}
+
+> {% client.global.set("userId", response.body.id); %}
+
+### Get user by id (200)
+GET {{baseUrl}}/api/users/{{userId}}
+
+### Update user (200)
+PUT {{baseUrl}}/api/users/{{userId}}
+Content-Type: {{contentType}}
+
+{
+  "name": "Me Updated"
+}
+
+### Negative: create invalid user (400) - blank name
+POST {{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "name": "   "
+}
+
+### Delete user (204)
+DELETE {{baseUrl}}/api/users/{{userId}}
+
+### Get non-existing user (404)
+GET {{baseUrl}}/api/users/999999

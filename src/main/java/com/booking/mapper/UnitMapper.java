@@ -8,6 +8,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface UnitMapper {
 
-  @Mapping(source = "ceratedBy.id", target = "createdById")
+  @Mapping(source = "createdBy.id", target = "createdById")
   UnitResponse toDto(Unit unit);
 }
