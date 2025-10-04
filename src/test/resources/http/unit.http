@@ -1,0 +1,74 @@
+@baseUrl = http://localhost:8080
+@contentType = application/json
+
+### Prepare: create owner (201)
+POST {{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "name": "Owner Bob"
+}
+
+> {% client.global.set("ownerId", response.body.id); %}
+
+### Create unit (201) - uses getReferenceById(ownerId)
+POST {{baseUrl}}/api/units
+Content-Type: {{contentType}}
+
+{
+  "numberOfRooms": 3,
+  "accommodationType": "FLAT",
+  "floor": 5,
+  "basePrice": 120.00,
+  "description": "Nice flat near the park",
+  "createdById": {{ownerId}}
+}
+
+> {% client.global.set("unitId", response.body.id); %}
+
+### Get unit by id (200)
+GET {{baseUrl}}/api/units/{{unitId}}
+
+### List units with pagination (200)
+GET {{baseUrl}}/api/units?page=0&size=10&sort=basePrice,desc
+
+### Update unit (200)
+PUT {{baseUrl}}/api/units/{{unitId}}
+Content-Type: {{contentType}}
+
+{
+  "numberOfRooms": 4,
+  "accommodationType": "APARTMENTS",
+  "floor": 7,
+  "basePrice": 150.50,
+  "description": "Updated: big apartments with view"
+}
+
+### Negative: wrong enum value (400) - JSON parse/validation
+POST {{baseUrl}}/api/units
+Content-Type: {{contentType}}
+
+{
+  "numberOfRooms": 2,
+  "accommodationType": "PENTHOUSE",   // invalid
+  "floor": 1,
+  "basePrice": 90,
+  "description": "Invalid enum",
+  "createdById": {{ownerId}}
+}
+
+### Negative: non-existing owner -> FK violation -> 404 (Advice)
+POST {{baseUrl}}/api/units
+Content-Type: {{contentType}}
+
+{
+  "numberOfRooms": 2,
+  "accommodationType": "HOME",
+  "floor": 1,
+  "basePrice": 90.00,
+  "description": "Should be 404 due to FK",
+  "createdById": 999999
+}
+
+### Delete unit (204)
+DELETE {{baseUrl}}/api/units/{{unitId}}
