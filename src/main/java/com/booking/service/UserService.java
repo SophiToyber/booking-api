@@ -7,7 +7,6 @@ import com.booking.web.dto.user.UserCreateRequest;
 import com.booking.web.dto.user.UserResponse;
 import com.booking.web.dto.user.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,10 +43,10 @@ public class UserService {
   }
 
   public void delete(Long id) {
-    try {
-      userRepository.deleteById(id);
-    } catch (EmptyResultDataAccessException ex) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User %d not found".formatted(id));
+    if (!userRepository.existsById(id)) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+          "User %d not found".formatted(id));
     }
+    userRepository.deleteById(id);
   }
 }
