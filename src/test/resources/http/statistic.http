@@ -1,0 +1,43 @@
+@baseUrl = http://localhost:8080
+
+### Get available units count (200) - will be cached
+GET {{baseUrl}}/api/statistics/available-units?startDate=2025-11-01&endDate=2025-11-05
+
+### Get available units count for different period (200)
+GET {{baseUrl}}/api/statistics/available-units?startDate=2025-12-01&endDate=2025-12-10
+
+### Get available units count - same period (200) - should return from cache
+GET {{baseUrl}}/api/statistics/available-units?startDate=2025-11-01&endDate=2025-11-05
+
+### Negative: Invalid date range - end before start (400)
+GET {{baseUrl}}/api/statistics/available-units?startDate=2025-11-05&endDate=2025-11-01
+
+### Negative: Equal dates (400)
+GET {{baseUrl}}/api/statistics/available-units?startDate=2025-11-01&endDate=2025-11-01
+
+### Negative: Missing parameters (400)
+GET {{baseUrl}}/api/statistics/available-units?startDate=2025-11-01
+
+### Cache invalidation test workflow:
+### Step 1: Get count (will be cached)
+GET {{baseUrl}}/api/statistics/available-units?startDate=2025-11-01&endDate=2025-11-05
+
+### Step 2: Create booking (will invalidate cache)
+POST {{baseUrl}}/api/bookings
+Content-Type: application/json
+
+{
+  "unitId": 4,
+  "userId": 4,
+  "startDate": "2025-11-02",
+  "endDate": "2025-11-04"
+}
+
+### Step 3: Get count again (cache miss, should recalculate)
+GET {{baseUrl}}/api/statistics/available-units?startDate=2025-11-01&endDate=2025-11-05
+
+### Step 4: Cancel booking (will invalidate cache)
+PUT {{baseUrl}}/api/bookings/2/cancel
+
+### Step 5: Get count again (cache miss, should recalculate)
+GET {{baseUrl}}/api/statistics/available-units?startDate=2025-11-01&endDate=2025-11-05
