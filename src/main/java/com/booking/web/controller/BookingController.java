@@ -79,21 +79,4 @@ public class BookingController {
       @PathVariable Long id) {
     return bookingService.cancel(id);
   }
-
-  @PutMapping("/{id}/pay")
-  @Operation(
-      summary = "Pay for booking (deprecated - use /api/payments instead)",
-      description = "Marks booking as paid. This endpoint is deprecated, use POST /api/payments/booking/{bookingId} instead."
-  )
-  @ApiResponses({
-      @ApiResponse(responseCode = "200", description = "Booking paid successfully"),
-      @ApiResponse(responseCode = "400", description = "Cannot pay for cancelled, expired or already paid booking"),
-      @ApiResponse(responseCode = "404", description = "Booking not found")
-  })
-  @Deprecated
-  public BookingResponse pay(
-      @Parameter(description = "Booking ID", example = "1")
-      @PathVariable Long id) {
-    return bookingService.pay(id);
-  }
 }

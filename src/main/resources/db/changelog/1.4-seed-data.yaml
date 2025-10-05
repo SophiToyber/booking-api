@@ -1,0 +1,534 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5
+      author: me
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: Alice Johnson
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: name
+                  value: Bob Smith
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: number_of_rooms
+                  value: 2
+              - column:
+                  name: accommodation_type
+                  value: FLAT
+              - column:
+                  name: floor
+                  value: 3
+              - column:
+                  name: base_price
+                  value: 100.00
+              - column:
+                  name: markup_price
+                  value: 115.00
+              - column:
+                  name: description
+                  value: Modern flat in city center
+              - column:
+                  name: created_by
+                  value: 1
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: number_of_rooms
+                  value: 3
+              - column:
+                  name: accommodation_type
+                  value: APARTMENTS
+              - column:
+                  name: floor
+                  value: 5
+              - column:
+                  name: base_price
+                  value: 150.00
+              - column:
+                  name: markup_price
+                  value: 172.50
+              - column:
+                  name: description
+                  value: Spacious apartments with balcony
+              - column:
+                  name: created_by
+                  value: 1
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: id
+                  value: 3
+              - column:
+                  name: number_of_rooms
+                  value: 5
+              - column:
+                  name: accommodation_type
+                  value: HOME
+              - column:
+                  name: floor
+                  value: 1
+              - column:
+                  name: base_price
+                  value: 250.00
+              - column:
+                  name: markup_price
+                  value: 287.50
+              - column:
+                  name: description
+                  value: Family home with garden
+              - column:
+                  name: created_by
+                  value: 2
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: id
+                  value: 4
+              - column:
+                  name: number_of_rooms
+                  value: 1
+              - column:
+                  name: accommodation_type
+                  value: FLAT
+              - column:
+                  name: floor
+                  value: 2
+              - column:
+                  name: base_price
+                  value: 80.00
+              - column:
+                  name: markup_price
+                  value: 92.00
+              - column:
+                  name: description
+                  value: Cozy studio apartment
+              - column:
+                  name: created_by
+                  value: 1
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: id
+                  value: 5
+              - column:
+                  name: number_of_rooms
+                  value: 4
+              - column:
+                  name: accommodation_type
+                  value: APARTMENTS
+              - column:
+                  name: floor
+                  value: 8
+              - column:
+                  name: base_price
+                  value: 200.00
+              - column:
+                  name: markup_price
+                  value: 230.00
+              - column:
+                  name: description
+                  value: Luxury penthouse apartments
+              - column:
+                  name: created_by
+                  value: 2
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: id
+                  value: 6
+              - column:
+                  name: number_of_rooms
+                  value: 2
+              - column:
+                  name: accommodation_type
+                  value: FLAT
+              - column:
+                  name: floor
+                  value: 4
+              - column:
+                  name: base_price
+                  value: 120.00
+              - column:
+                  name: markup_price
+                  value: 138.00
+              - column:
+                  name: description
+                  value: Recently renovated flat
+              - column:
+                  name: created_by
+                  value: 1
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: id
+                  value: 7
+              - column:
+                  name: number_of_rooms
+                  value: 3
+              - column:
+                  name: accommodation_type
+                  value: HOME
+              - column:
+                  name: floor
+                  value: 2
+              - column:
+                  name: base_price
+                  value: 180.00
+              - column:
+                  name: markup_price
+                  value: 207.00
+              - column:
+                  name: description
+                  value: Comfortable suburban home
+              - column:
+                  name: created_by
+                  value: 2
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: id
+                  value: 8
+              - column:
+                  name: number_of_rooms
+                  value: 2
+              - column:
+                  name: accommodation_type
+                  value: APARTMENTS
+              - column:
+                  name: floor
+                  value: 6
+              - column:
+                  name: base_price
+                  value: 140.00
+              - column:
+                  name: markup_price
+                  value: 161.00
+              - column:
+                  name: description
+                  value: Downtown apartments near metro
+              - column:
+                  name: created_by
+                  value: 1
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: id
+                  value: 9
+              - column:
+                  name: number_of_rooms
+                  value: 1
+              - column:
+                  name: accommodation_type
+                  value: FLAT
+              - column:
+                  name: floor
+                  value: 7
+              - column:
+                  name: base_price
+                  value: 90.00
+              - column:
+                  name: markup_price
+                  value: 103.50
+              - column:
+                  name: description
+                  value: Budget-friendly studio
+              - column:
+                  name: created_by
+                  value: 2
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: id
+                  value: 10
+              - column:
+                  name: number_of_rooms
+                  value: 6
+              - column:
+                  name: accommodation_type
+                  value: HOME
+              - column:
+                  name: floor
+                  value: 1
+              - column:
+                  name: base_price
+                  value: 300.00
+              - column:
+                  name: markup_price
+                  value: 345.00
+              - column:
+                  name: description
+                  value: Large family home with pool
+              - column:
+                  name: created_by
+                  value: 2
+
+        # Create events for unit creation
+        - insert:
+            tableName: events
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: event_type
+                  value: UNIT_CREATED
+              - column:
+                  name: entity_type
+                  value: Unit
+              - column:
+                  name: entity_id
+                  value: 1
+              - column:
+                  name: details
+                  value: Initial seed data - Modern flat in city center
+              - column:
+                  name: created_at
+                  valueDate: 2025-01-01T10:00:00
+
+        - insert:
+            tableName: events
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: event_type
+                  value: UNIT_CREATED
+              - column:
+                  name: entity_type
+                  value: Unit
+              - column:
+                  name: entity_id
+                  value: 2
+              - column:
+                  name: details
+                  value: Initial seed data - Spacious apartments with balcony
+              - column:
+                  name: created_at
+                  valueDate: 2025-01-01T10:05:00
+
+        - insert:
+            tableName: events
+            columns:
+              - column:
+                  name: id
+                  value: 3
+              - column:
+                  name: event_type
+                  value: UNIT_CREATED
+              - column:
+                  name: entity_type
+                  value: Unit
+              - column:
+                  name: entity_id
+                  value: 3
+              - column:
+                  name: details
+                  value: Initial seed data - Family home with garden
+              - column:
+                  name: created_at
+                  valueDate: 2025-01-01T10:10:00
+
+        - insert:
+            tableName: events
+            columns:
+              - column:
+                  name: id
+                  value: 4
+              - column:
+                  name: event_type
+                  value: UNIT_CREATED
+              - column:
+                  name: entity_type
+                  value: Unit
+              - column:
+                  name: entity_id
+                  value: 4
+              - column:
+                  name: details
+                  value: Initial seed data - Cozy studio apartment
+              - column:
+                  name: created_at
+                  valueDate: 2025-01-01T10:15:00
+
+        - insert:
+            tableName: events
+            columns:
+              - column:
+                  name: id
+                  value: 5
+              - column:
+                  name: event_type
+                  value: UNIT_CREATED
+              - column:
+                  name: entity_type
+                  value: Unit
+              - column:
+                  name: entity_id
+                  value: 5
+              - column:
+                  name: details
+                  value: Initial seed data - Luxury penthouse apartments
+              - column:
+                  name: created_at
+                  valueDate: 2025-01-01T10:20:00
+
+        - insert:
+            tableName: events
+            columns:
+              - column:
+                  name: id
+                  value: 6
+              - column:
+                  name: event_type
+                  value: UNIT_CREATED
+              - column:
+                  name: entity_type
+                  value: Unit
+              - column:
+                  name: entity_id
+                  value: 6
+              - column:
+                  name: details
+                  value: Initial seed data - Recently renovated flat
+              - column:
+                  name: created_at
+                  valueDate: 2025-01-01T10:25:00
+
+        - insert:
+            tableName: events
+            columns:
+              - column:
+                  name: id
+                  value: 7
+              - column:
+                  name: event_type
+                  value: UNIT_CREATED
+              - column:
+                  name: entity_type
+                  value: Unit
+              - column:
+                  name: entity_id
+                  value: 7
+              - column:
+                  name: details
+                  value: Initial seed data - Comfortable suburban home
+              - column:
+                  name: created_at
+                  valueDate: 2025-01-01T10:30:00
+
+        - insert:
+            tableName: events
+            columns:
+              - column:
+                  name: id
+                  value: 8
+              - column:
+                  name: event_type
+                  value: UNIT_CREATED
+              - column:
+                  name: entity_type
+                  value: Unit
+              - column:
+                  name: entity_id
+                  value: 8
+              - column:
+                  name: details
+                  value: Initial seed data - Downtown apartments near metro
+              - column:
+                  name: created_at
+                  valueDate: 2025-01-01T10:35:00
+
+        - insert:
+            tableName: events
+            columns:
+              - column:
+                  name: id
+                  value: 9
+              - column:
+                  name: event_type
+                  value: UNIT_CREATED
+              - column:
+                  name: entity_type
+                  value: Unit
+              - column:
+                  name: entity_id
+                  value: 9
+              - column:
+                  name: details
+                  value: Initial seed data - Budget-friendly studio
+              - column:
+                  name: created_at
+                  valueDate: 2025-01-01T10:40:00
+
+        - insert:
+            tableName: events
+            columns:
+              - column:
+                  name: id
+                  value: 10
+              - column:
+                  name: event_type
+                  value: UNIT_CREATED
+              - column:
+                  name: entity_type
+                  value: Unit
+              - column:
+                  name: entity_id
+                  value: 10
+              - column:
+                  name: details
+                  value: Initial seed data - Large family home with pool
+              - column:
+                  name: created_at
+                  valueDate: 2025-01-01T10:45:00
+
+        - sql:
+            sql: SELECT setval('user_seq', 2, true);
+
+        - sql:
+            sql: SELECT setval('unit_seq', 10, true);
+
+        - sql:
+            sql: SELECT setval('event_seq', 10, true);

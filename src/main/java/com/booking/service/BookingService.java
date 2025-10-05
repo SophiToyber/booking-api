@@ -110,41 +110,6 @@ public class BookingService {
     return bookingMapper.toDto(booking);
   }
 
-  @CacheEvict(value = "availableUnitsCount", allEntries = true)
-  public BookingResponse pay(Long id) {
-    Booking booking = bookingRepository.findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-            "Booking %d not found".formatted(id)));
-
-    if (booking.getStatus() == BookingStatus.CANCELLED) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Cannot pay for cancelled booking");
-    }
-
-    if (booking.getStatus() == BookingStatus.PAID) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Booking is already paid");
-    }
-
-    if (LocalDateTime.now().isAfter(booking.getExpiresAt())) {
-      booking.setStatus(BookingStatus.CANCELLED);
-      eventService.logEvent(EventType.BOOKING_EXPIRED, "Booking", booking.getId(),
-          "Booking expired before payment");
-      log.info("Booking {} expired, automatically cancelled. Cache invalidated.", id);
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Booking has expired and was cancelled");
-    }
-
-    booking.setStatus(BookingStatus.PAID);
-
-    eventService.logEvent(EventType.PAYMENT_COMPLETED, "Booking", booking.getId(),
-        "Payment completed via deprecated booking/pay endpoint");
-
-    log.info("Paid booking {}. Cache invalidated.", id);
-
-    return bookingMapper.toDto(booking);
-  }
-
   private boolean checkUnitAvailability(Long unitId,
       java.time.LocalDate startDate,
       java.time.LocalDate endDate) {
