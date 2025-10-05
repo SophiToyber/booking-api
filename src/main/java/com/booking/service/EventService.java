@@ -6,9 +6,11 @@ import com.booking.mapper.EventMapper;
 import com.booking.repository.EventRepository;
 import com.booking.web.dto.event.EventResponse;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -41,7 +43,15 @@ public class EventService {
   @Transactional(readOnly = true)
   public Page<EventResponse> getEventsByEntity(String entityType, Long entityId,
       Pageable pageable) {
-    return eventRepository.findAll(pageable).map(eventMapper::toDto);
+    List<Event> events = eventRepository.findByEntityTypeAndEntityId(entityType, entityId);
+
+    int start = (int) pageable.getOffset();
+    int end = Math.min((start + pageable.getPageSize()), events.size());
+
+    List<Event> pageContent = events.subList(start, end);
+    Page<Event> eventPage = new PageImpl<>(pageContent, pageable, events.size());
+
+    return eventPage.map(eventMapper::toDto);
   }
 
   @Transactional(readOnly = true)
