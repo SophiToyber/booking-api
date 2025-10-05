@@ -313,68 +313,6 @@ class BookingServiceTest {
   }
 
   @Test
-  @DisplayName("Should pay for booking successfully")
-  void pay_WhenBookingPending_ShouldMarkAsPaid() {
-    // Given
-    mockBooking.setStatus(BookingStatus.PENDING);
-    mockBooking.setExpiresAt(LocalDateTime.now().plusMinutes(10)); // Not expired
-
-    when(bookingRepository.findById(1L)).thenReturn(Optional.of(mockBooking));
-    when(bookingMapper.toDto(mockBooking)).thenReturn(mockResponse);
-
-    // When
-    BookingResponse result = bookingService.pay(1L);
-
-    // Then
-    assertThat(mockBooking.getStatus()).isEqualTo(BookingStatus.PAID);
-  }
-
-  @Test
-  @DisplayName("Should throw exception when paying for cancelled booking")
-  void pay_WhenCancelled_ShouldThrowException() {
-    // Given
-    mockBooking.setStatus(BookingStatus.CANCELLED);
-
-    when(bookingRepository.findById(1L)).thenReturn(Optional.of(mockBooking));
-
-    // When & Then
-    assertThatThrownBy(() -> bookingService.pay(1L))
-        .isInstanceOf(ResponseStatusException.class)
-        .hasMessageContaining("Cannot pay for cancelled booking");
-  }
-
-  @Test
-  @DisplayName("Should throw exception when paying for already paid booking")
-  void pay_WhenAlreadyPaid_ShouldThrowException() {
-    // Given
-    mockBooking.setStatus(BookingStatus.PAID);
-
-    when(bookingRepository.findById(1L)).thenReturn(Optional.of(mockBooking));
-
-    // When & Then
-    assertThatThrownBy(() -> bookingService.pay(1L))
-        .isInstanceOf(ResponseStatusException.class)
-        .hasMessageContaining("Booking is already paid");
-  }
-
-  @Test
-  @DisplayName("Should auto-cancel expired booking when trying to pay")
-  void pay_WhenExpired_ShouldCancelAndThrowException() {
-    // Given
-    mockBooking.setStatus(BookingStatus.PENDING);
-    mockBooking.setExpiresAt(LocalDateTime.now().minusMinutes(1)); // Expired
-
-    when(bookingRepository.findById(1L)).thenReturn(Optional.of(mockBooking));
-
-    // When & Then
-    assertThatThrownBy(() -> bookingService.pay(1L))
-        .isInstanceOf(ResponseStatusException.class)
-        .hasMessageContaining("Booking has expired and was cancelled");
-
-    assertThat(mockBooking.getStatus()).isEqualTo(BookingStatus.CANCELLED);
-  }
-
-  @Test
   @DisplayName("Should auto-cancel expired bookings")
   void cancelExpiredBookings_ShouldCancelOnlyExpiredPendingBookings() {
     // Given

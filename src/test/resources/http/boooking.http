@@ -52,11 +52,11 @@ Content-Type: {{contentType}}
 ### Get booking by id (200)
 GET {{baseUrl}}/api/bookings/{{bookingId}}
 
+### Pay for booking using PaymentController (201) - NEW WAY
+POST {{baseUrl}}/api/payments/booking/{{bookingId}}
+
 ### Cancel booking (200)
 PUT {{baseUrl}}/api/bookings/{{bookingId}}/cancel
-
-### Pay for booking (200)
-PUT {{baseUrl}}/api/bookings/{{bookingId}}/pay
 
 ### Negative: try to create overlapping booking (409)
 POST {{baseUrl}}/api/bookings
@@ -134,3 +134,29 @@ Content-Type: {{contentType}}
   "endDate": "2025-11-05",
   "accommodationType": "HOME"
 }
+
+### Complete workflow: Create -> Get -> Pay -> Verify
+### Step 1: Create booking
+POST {{baseUrl}}/api/bookings
+Content-Type: {{contentType}}
+
+{
+  "unitId": {{unitId}},
+  "userId": {{userId}},
+  "startDate": "2025-12-01",
+  "endDate": "2025-12-05"
+}
+
+> {% client.global.set("workflowBookingId", response.body.id); %}
+
+### Step 2: Get booking details
+GET {{baseUrl}}/api/bookings/{{workflowBookingId}}
+
+### Step 3: Pay for booking (using PaymentController)
+POST {{baseUrl}}/api/payments/booking/{{workflowBookingId}}
+
+### Step 4: Verify booking is paid
+GET {{baseUrl}}/api/bookings/{{workflowBookingId}}
+
+### Step 5: Get payment details
+GET {{baseUrl}}/api/payments/booking/{{workflowBookingId}}
