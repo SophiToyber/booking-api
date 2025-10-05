@@ -1,0 +1,92 @@
+@baseUrl = http://localhost:8080
+@contentType = application/json
+
+### Prepare: create user
+POST {{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "name": "Payment Test User"
+}
+
+> {% client.global.set("userId", response.body.id); %}
+
+### Prepare: create unit
+POST {{baseUrl}}/api/units
+Content-Type: {{contentType}}
+
+{
+  "numberOfRooms": 2,
+  "accommodationType": "FLAT",
+  "floor": 3,
+  "basePrice": 100.00,
+  "description": "Test flat for payment",
+  "createdById": {{userId}}
+}
+
+> {% client.global.set("unitId", response.body.id); %}
+
+### Create booking for payment
+POST {{baseUrl}}/api/bookings
+Content-Type: {{contentType}}
+
+{
+  "unitId": {{unitId}},
+  "userId": {{userId}},
+  "startDate": "2025-11-10",
+  "endDate": "2025-11-15"
+}
+
+> {% client.global.set("bookingId", response.body.id); %}
+
+### Process payment (201) - NEW ENDPOINT
+POST {{baseUrl}}/api/payments/booking/{{bookingId}}
+
+> {% client.global.set("paymentId", response.body.id); %}
+
+### Get payment by ID (200)
+GET {{baseUrl}}/api/payments/{{paymentId}}
+
+### Get payment by booking ID (200)
+GET {{baseUrl}}/api/payments/booking/{{bookingId}}
+
+### Negative: try to pay for already paid booking (400)
+POST {{baseUrl}}/api/payments/booking/{{bookingId}}
+
+### Negative: try to pay for non-existing booking (404)
+POST {{baseUrl}}/api/payments/booking/999999
+
+### Create another booking and cancel it
+POST {{baseUrl}}/api/bookings
+Content-Type: {{contentType}}
+
+{
+  "unitId": {{unitId}},
+  "userId": {{userId}},
+  "startDate": "2025-12-01",
+  "endDate": "2025-12-05"
+}
+
+> {% client.global.set("cancelBookingId", response.body.id); %}
+
+### Cancel booking
+PUT {{baseUrl}}/api/bookings/{{cancelBookingId}}/cancel
+
+### Negative: try to pay for cancelled booking (400)
+POST {{baseUrl}}/api/payments/booking/{{cancelBookingId}}
+
+### Test payment calculation (4 nights * 115.00 = 460.00)
+POST {{baseUrl}}/api/bookings
+Content-Type: {{contentType}}
+
+{
+  "unitId": {{unitId}},
+  "userId": {{userId}},
+  "startDate": "2025-11-20",
+  "endDate": "2025-11-24"
+}
+
+> {% client.global.set("calcBookingId", response.body.id); %}
+
+### Process payment and check amount
+POST {{baseUrl}}/api/payments/booking/{{calcBookingId}}

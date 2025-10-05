@@ -4,6 +4,7 @@ import com.booking.entity.Booking;
 import com.booking.entity.Unit;
 import com.booking.entity.User;
 import com.booking.entity.enums.BookingStatus;
+import com.booking.entity.enums.EventType;
 import com.booking.mapper.BookingMapper;
 import com.booking.repository.BookingRepository;
 import com.booking.repository.UnitRepository;
@@ -29,6 +30,7 @@ public class BookingService {
   private final UnitRepository unitRepository;
   private final UserRepository userRepository;
   private final BookingMapper bookingMapper;
+  private final EventService eventService;
 
   @CacheEvict(value = "availableUnitsCount", allEntries = true)
   public BookingResponse create(BookingCreateRequest req) {
@@ -64,6 +66,10 @@ public class BookingService {
     booking.setExpiresAt(expiresAt);
 
     Booking saved = bookingRepository.save(booking);
+
+    eventService.logEvent(EventType.BOOKING_CREATED, "Booking", saved.getId(),
+        "Booking created for unit " + unit.getId() + " by user " + user.getId());
+
     log.info("Created booking {} for unit {} by user {}, expires at {}. Cache invalidated.",
         saved.getId(), unit.getId(), user.getId(), expiresAt);
 
@@ -95,6 +101,10 @@ public class BookingService {
     }
 
     booking.setStatus(BookingStatus.CANCELLED);
+
+    eventService.logEvent(EventType.BOOKING_CANCELLED, "Booking", booking.getId(),
+        "Booking cancelled by user");
+
     log.info("Cancelled booking {}. Cache invalidated.", id);
 
     return bookingMapper.toDto(booking);
@@ -118,12 +128,18 @@ public class BookingService {
 
     if (LocalDateTime.now().isAfter(booking.getExpiresAt())) {
       booking.setStatus(BookingStatus.CANCELLED);
+      eventService.logEvent(EventType.BOOKING_EXPIRED, "Booking", booking.getId(),
+          "Booking expired before payment");
       log.info("Booking {} expired, automatically cancelled. Cache invalidated.", id);
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "Booking has expired and was cancelled");
     }
 
     booking.setStatus(BookingStatus.PAID);
+
+    eventService.logEvent(EventType.PAYMENT_COMPLETED, "Booking", booking.getId(),
+        "Payment completed via deprecated booking/pay endpoint");
+
     log.info("Paid booking {}. Cache invalidated.", id);
 
     return bookingMapper.toDto(booking);
@@ -163,6 +179,10 @@ public class BookingService {
 
     for (Booking booking : expiredBookings) {
       booking.setStatus(BookingStatus.CANCELLED);
+
+      eventService.logEvent(EventType.BOOKING_EXPIRED, "Booking", booking.getId(),
+          "Booking automatically cancelled due to expiration");
+
       log.info("Auto-cancelled expired booking {}", booking.getId());
     }
 
