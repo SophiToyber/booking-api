@@ -85,7 +85,7 @@ public class UnitService {
   }
 
   @Transactional(readOnly = true)
-  @Cacheable(value = "availableUnits", key = "#startDate + '_' + #endDate")
+  @Cacheable(value = "availableUnitsCount")
   public AvailableUnitsResponse getAvailableCount(LocalDate startDate, LocalDate endDate) {
     if (endDate.isBefore(startDate) || endDate.isEqual(startDate)) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,

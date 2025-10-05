@@ -30,7 +30,7 @@ public class BookingService {
   private final UserRepository userRepository;
   private final BookingMapper bookingMapper;
 
-  @CacheEvict(value = "availableUnits", allEntries = true)
+  @CacheEvict(value = "availableUnitsCount", allEntries = true)
   public BookingResponse create(BookingCreateRequest req) {
     if (req.endDate().isBefore(req.startDate()) || req.endDate().isEqual(req.startDate())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -78,7 +78,7 @@ public class BookingService {
     return bookingMapper.toDto(booking);
   }
 
-  @CacheEvict(value = "availableUnits", allEntries = true)
+  @CacheEvict(value = "availableUnitsCount", allEntries = true)
   public BookingResponse cancel(Long id) {
     Booking booking = bookingRepository.findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -100,7 +100,7 @@ public class BookingService {
     return bookingMapper.toDto(booking);
   }
 
-  @CacheEvict(value = "availableUnits", allEntries = true)
+  @CacheEvict(value = "availableUnitsCount", allEntries = true)
   public BookingResponse pay(Long id) {
     Booking booking = bookingRepository.findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -152,7 +152,7 @@ public class BookingService {
     return true;
   }
 
-  @CacheEvict(value = "availableUnits", allEntries = true)
+  @CacheEvict(value = "availableUnitsCount", allEntries = true)
   public void cancelExpiredBookings() {
     LocalDateTime now = LocalDateTime.now();
 
