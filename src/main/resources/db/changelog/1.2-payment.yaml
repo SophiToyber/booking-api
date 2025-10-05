@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: me
+      changes:
+        - createSequence:
+            sequenceName: payment_seq
+            startValue: 1
+            incrementBy: 1
+
+        - createTable:
+            tableName: payments
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: booking_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_payment_booking
+                    references: bookings(id)
+                    unique: true
+              - column:
+                  name: amount
+                  type: decimal(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: paid_at
+                  type: timestamp
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false

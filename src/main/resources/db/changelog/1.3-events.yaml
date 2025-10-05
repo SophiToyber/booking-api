@@ -1,0 +1,57 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4
+      author: me
+      changes:
+        - createSequence:
+            sequenceName: event_seq
+            startValue: 1
+            incrementBy: 1
+
+        - createTable:
+            tableName: events
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: event_type
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: entity_type
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: entity_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: details
+                  type: text
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+        - createIndex:
+            indexName: idx_events_entity
+            tableName: events
+            columns:
+              - column:
+                  name: entity_type
+              - column:
+                  name: entity_id
+
+        - createIndex:
+            indexName: idx_events_created_at
+            tableName: events
+            columns:
+              - column:
+                  name: created_at

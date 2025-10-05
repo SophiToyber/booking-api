@@ -5,3 +5,9 @@ databaseChangeLog:
   - include:
       file: 1.1-booking.yaml
       relativeToChangelogFile: true
+  - include:
+      file: 1.2-payment.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: 1.3-events.yaml
+      relativeToChangelogFile: true
